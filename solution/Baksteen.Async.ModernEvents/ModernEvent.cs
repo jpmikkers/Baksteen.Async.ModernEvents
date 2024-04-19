@@ -30,7 +30,7 @@ public class ModernEvent<TEventArgs> : IModernEvent<TEventArgs>, IDisposable
         }
     }
 
-    public IDisposable SubscribeAsync(Func<TEventArgs,Task> action)
+    public IDisposable Subscribe(Func<TEventArgs,Task> action)
     {
         lock(_subscriptions)
         {

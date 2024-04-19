@@ -3,5 +3,5 @@
 public interface IModernEvent<TEventArgs>
 {
     public IDisposable Subscribe(Action<TEventArgs> action);
-    public IDisposable SubscribeAsync(Func<TEventArgs, Task> action);
+    public IDisposable Subscribe(Func<TEventArgs, Task> action);
 }

@@ -4,6 +4,31 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>0.1.0</Version>
+    <Authors>jpmikkers</Authors>
+    <Copyright>Copyright (c) JPMikkers 2024</Copyright>
+    <Description>Minimalistic event alternative that supports both sync and async subscribers</Description>
+    <PackageProjectUrl>https://github.com/jpmikkers/Baksteen.Async.ModernEvents</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/jpmikkers/Baksteen.Async.ModernEvents.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>event;eventhandler;observable;async</PackageTags>
+    <PackageReleaseNotes>First release</PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
+    <IncludeSymbols>False</IncludeSymbols>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>

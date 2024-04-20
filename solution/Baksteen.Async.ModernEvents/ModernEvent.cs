@@ -1,16 +1,12 @@
 ﻿namespace Baksteen.Async.ModernEvents;
 
-public class ModernEvent<TEventArgs> : IModernEvent<TEventArgs>, IDisposable
+public sealed class ModernEvent<TEventArgs> : IModernEvent<TEventArgs>, IDisposable
 {
     private class SubscriptionSlot(ModernEvent<TEventArgs> parent) : IDisposable
     {
         public Action<TEventArgs>? SyncSubscriber { get; init; }
-        public Func<TEventArgs,Task>? AsyncSubscriber { get; init; }
-
-        public void Dispose()
-        {
-            parent.Unsubscribe(this);
-        }
+        public Func<TEventArgs, Task>? AsyncSubscriber { get; init; }
+        public void Dispose() => parent.Unsubscribe(this);
     }
 
     private readonly List<SubscriptionSlot> _subscriptions = [];
@@ -20,21 +16,15 @@ public class ModernEvent<TEventArgs> : IModernEvent<TEventArgs>, IDisposable
     public bool IgnoreSubscriberExceptions { get; init; } = true;
 
     public IDisposable Subscribe(Action<TEventArgs> action)
-    {
-        lock(_subscriptions)
-        {
-            var slot = new SubscriptionSlot(this) { SyncSubscriber = action };
-            _subscriptions.Add(slot);
-            _isStaleCache = true;
-            return slot;
-        }
-    }
+        => Subscribe(new SubscriptionSlot(this) { SyncSubscriber = action });
 
-    public IDisposable Subscribe(Func<TEventArgs,Task> action)
+    public IDisposable Subscribe(Func<TEventArgs, Task> action)
+        => Subscribe(new SubscriptionSlot(this) { AsyncSubscriber = action });
+
+    private SubscriptionSlot Subscribe(SubscriptionSlot slot)
     {
         lock(_subscriptions)
         {
-            var slot = new SubscriptionSlot(this) { AsyncSubscriber = action };
             _subscriptions.Add(slot);
             _isStaleCache = true;
             return slot;
@@ -81,7 +71,7 @@ public class ModernEvent<TEventArgs> : IModernEvent<TEventArgs>, IDisposable
             {
                 if(IgnoreSubscriberExceptions)
                 {
-                    try { await slot.AsyncSubscriber(args).ConfigureAwait(false); } catch { };
+                    try { await slot.AsyncSubscriber(args).ConfigureAwait(false); } catch { }
                 }
                 else
                 {

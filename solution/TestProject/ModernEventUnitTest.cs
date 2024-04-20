@@ -103,4 +103,41 @@ public class ModernEventUnitTest
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => await modernEvent.InvokeAsync(0));
         }
     }
+
+    [TestMethod]
+    public async Task Test_RepeatedSubscriptionDisposeDoesNotThrow()
+    {
+        List<int> callSequence = [];
+        ModernEvent<int> modernEvent = new();
+
+        var s1 = modernEvent.Subscribe(x => callSequence.Add(1));
+
+        // expect no exception on repeated dispose:
+        s1.Dispose();
+        s1.Dispose();
+        s1.Dispose();
+
+        await modernEvent.InvokeAsync(0);
+        CollectionAssert.AreEquivalent(new List<int>(), callSequence);
+
+        await Task.CompletedTask;
+    }
+
+    [TestMethod]
+    public async Task Test_RepeatedEventDisposeDoesNotThrow()
+    {
+        List<int> callSequence = [];
+        ModernEvent<int> modernEvent = new();
+
+        modernEvent.Subscribe(x => callSequence.Add(1));
+
+        // expect no exception on repeated dispose:
+        modernEvent.Dispose();
+        modernEvent.Dispose();
+
+        await modernEvent.InvokeAsync(0);
+        CollectionAssert.AreEquivalent(new List<int>(), callSequence);
+
+        await Task.CompletedTask;
+    }
 }
